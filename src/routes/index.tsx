@@ -78,9 +78,10 @@ async function fetchRepoStat(fullName: string): Promise<RepoStat> {
       }
       base.uniqueAuthorsWeek = authors7.size;
       if (commits[0]?.commit?.author?.date) {
-        base.lastCommitDate = commits[0].commit.author.date;
+        const d: string = commits[0].commit.author.date;
+        base.lastCommitDate = d;
         base.daysSinceLastCommit = Math.floor(
-          (now - new Date(base.lastCommitDate).getTime()) / 86400000,
+          (now - new Date(d).getTime()) / 86400000,
         );
       }
     }
