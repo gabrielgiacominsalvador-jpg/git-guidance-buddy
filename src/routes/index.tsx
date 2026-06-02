@@ -109,6 +109,15 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [newRepo, setNewRepo] = useState("");
   const [chatOpen, setChatOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUser(data.user ?? null));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_e, session) => setUser(session?.user ?? null),
+    );
+    return () => subscription.unsubscribe();
+  }, []);
 
   async function load() {
     setLoading(true);
@@ -160,6 +169,28 @@ function Dashboard() {
               <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
               Sincronizar
             </Button>
+            {user ? (
+              <div className="flex items-center gap-2">
+                <span className="hidden text-xs text-muted-foreground sm:inline">
+                  {user.email}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => supabase.auth.signOut()}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sair
+                </Button>
+              </div>
+            ) : (
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/auth">
+                  <LogIn className="mr-2 h-4 w-4" />
+                  Entrar
+                </Link>
+              </Button>
+            )}
             <Button
               size="sm"
               onClick={() => setChatOpen(true)}
