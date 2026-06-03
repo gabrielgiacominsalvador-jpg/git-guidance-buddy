@@ -152,64 +152,88 @@ function Dashboard() {
     setNewRepo("");
   };
 
+  const activePct = stats.length
+    ? Math.round(((stats.length - summary.stalled.length) / stats.length) * 100)
+    : 0;
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-3 sm:px-6 sm:py-4">
+          <div className="flex items-center gap-2">
             <div className="text-2xl">📚</div>
             <div>
-              <h1 className="text-lg font-bold">GitDash</h1>
-              <p className="text-xs text-muted-foreground">Visão do professor</p>
+              <h1 className="text-base font-bold sm:text-lg">GitDash</h1>
+              <p className="text-[11px] text-muted-foreground sm:text-xs">
+                Acompanhamento de turmas via GitHub
+              </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <ThemeToggle />
-            <Button variant="outline" size="sm" onClick={load} disabled={loading}>
-              <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-              Sincronizar
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={load}
+              disabled={loading}
+              aria-label="Sincronizar dados"
+            >
+              <RefreshCw className={`h-4 w-4 sm:mr-2 ${loading ? "animate-spin" : ""}`} />
+              <span className="hidden sm:inline">Sincronizar</span>
             </Button>
             {user ? (
-              <div className="flex items-center gap-2">
-                <span className="hidden text-xs text-muted-foreground sm:inline">
-                  {user.email}
-                </span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => supabase.auth.signOut()}
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Sair
-                </Button>
-              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => supabase.auth.signOut()}
+                aria-label="Sair"
+              >
+                <LogOut className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Sair</span>
+              </Button>
             ) : (
               <Button variant="outline" size="sm" asChild>
                 <Link to="/auth">
-                  <LogIn className="mr-2 h-4 w-4" />
-                  Entrar
+                  <LogIn className="h-4 w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Entrar</span>
                 </Link>
               </Button>
             )}
-            <Button
-              size="sm"
-              onClick={() => setChatOpen(true)}
-              className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:opacity-90"
-            >
-              <Sparkles className="mr-2 h-4 w-4" />
-              Assistente IA
-            </Button>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-6 py-8 space-y-8">
-        {/* Intro */}
-        <section>
-          <h2 className="text-2xl font-bold">Quem precisa da sua atenção agora?</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Priorize alunos e projetos com menos sinais de progresso real. O foco aqui é acompanhamento, não ranking.
-          </p>
+      <main className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 sm:py-8">
+        {/* Intro / como ler */}
+        <section className="space-y-3">
+          <div>
+            <h2 className="text-xl font-bold sm:text-2xl">
+              Quem precisa da sua atenção agora?
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Cadastre os repositórios da turma e veja, em um relance, quais alunos
+              estão sem progresso recente.
+            </p>
+          </div>
+
+          {/* Legenda — como o risco é calculado */}
+          <Card className="bg-muted/30 p-3 text-xs sm:text-sm">
+            <div className="mb-1.5 font-semibold">Como o risco é calculado</div>
+            <ul className="space-y-1 text-muted-foreground">
+              <li>
+                <span className="font-medium text-red-600 dark:text-red-400">Alta atenção</span> —
+                mais de 14 dias sem commit ou nenhum commit na última semana.
+              </li>
+              <li>
+                <span className="font-medium text-amber-600 dark:text-amber-400">Média atenção</span> —
+                último commit entre 6 e 14 dias atrás.
+              </li>
+              <li>
+                <span className="font-medium text-emerald-600 dark:text-emerald-400">Em dia</span> —
+                commit nos últimos 5 dias.
+              </li>
+            </ul>
+          </Card>
         </section>
 
         {/* Add repo */}
@@ -217,7 +241,7 @@ function Dashboard() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
             <div className="flex-1">
               <label className="text-xs font-medium text-muted-foreground">
-                Adicionar repositório (formato owner/repo)
+                Adicionar repositório do GitHub (formato <code className="rounded bg-muted px-1">owner/repo</code>)
               </label>
               <Input
                 value={newRepo}
@@ -240,6 +264,7 @@ function Dashboard() {
                   <button
                     onClick={() => setRepos(repos.filter((x) => x !== r))}
                     className="ml-1 hover:text-destructive"
+                    aria-label={`Remover ${r}`}
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -249,52 +274,60 @@ function Dashboard() {
           )}
         </Card>
 
-        {/* KPIs */}
-        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <KPI
-            icon={<Users className="h-5 w-5" />}
-            value={summary.highRisk.length}
-            label="Alunos para acompanhar"
-            sub="com risco alto"
-            tone="warning"
-          />
-          <KPI
-            icon={<Pause className="h-5 w-5" />}
-            value={summary.stalled.length}
-            label="Projetos parados"
-            sub="sem commits na semana"
-            tone="danger"
-          />
-          <KPI
-            icon={<GitCommit className="h-5 w-5" />}
-            value={summary.totalCommits}
-            label="Commits recentes"
-            sub="últimos 7 dias"
-            tone="info"
-          />
-          <KPI
-            icon={<Activity className="h-5 w-5" />}
-            value={`${stats.length ? Math.round((stats.length - summary.stalled.length) / stats.length * 100) : 0}%`}
-            label="Projetos ativos"
-            sub="com atividade na semana"
-            tone="success"
-          />
+        {/* KPIs — resumo da turma */}
+        <section>
+          <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+            Resumo da turma
+          </h3>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <KPI
+              icon={<Users className="h-5 w-5" />}
+              value={summary.highRisk.length}
+              label="Precisam de atenção"
+              sub={`de ${stats.length} repositório(s)`}
+              tone="warning"
+            />
+            <KPI
+              icon={<Pause className="h-5 w-5" />}
+              value={summary.stalled.length}
+              label="Parados esta semana"
+              sub="0 commits nos últimos 7 dias"
+              tone="danger"
+            />
+            <KPI
+              icon={<GitCommit className="h-5 w-5" />}
+              value={summary.totalCommits}
+              label="Commits na semana"
+              sub="somando todos os repos"
+              tone="info"
+            />
+            <KPI
+              icon={<Activity className="h-5 w-5" />}
+              value={`${activePct}%`}
+              label="Repos ativos"
+              sub="com ao menos 1 commit/semana"
+              tone="success"
+            />
+          </div>
         </section>
 
         {/* Priority */}
         {summary.priority.length > 0 && (
           <Card className="border-amber-500/30 bg-amber-500/5 p-4">
             <div className="flex items-start gap-3">
-              <AlertTriangle className="mt-0.5 h-5 w-5 text-amber-600" />
-              <div>
-                <div className="text-sm font-semibold">Resumo de acompanhamento</div>
+              <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
+              <div className="min-w-0">
+                <div className="text-sm font-semibold">Ação sugerida</div>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  <strong>{summary.priority[0].owner}</strong> é o principal ponto de atenção —{" "}
-                  {summary.priority[0].daysSinceLastCommit} dias sem commit em{" "}
+                  Comece por{" "}
+                  <strong className="text-foreground">
+                    {summary.priority[0].owner}
+                  </strong>{" "}
+                  — {summary.priority[0].daysSinceLastCommit ?? "?"} dia(s) sem commit em{" "}
                   <code className="rounded bg-muted px-1 text-xs">
                     {summary.priority[0].fullName}
                   </code>
-                  . Chamar para check-in.
+                  . Vale um check-in.
                 </p>
               </div>
             </div>
@@ -303,21 +336,32 @@ function Dashboard() {
 
         {/* Project map */}
         <section>
-          <h3 className="text-lg font-semibold">Mapa dos projetos</h3>
-          <p className="text-sm text-muted-foreground">
-            Cada card mostra risco pedagógico antes de virar problema na entrega.
-          </p>
-          <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {loading && stats.length === 0
-              ? Array.from({ length: 3 }).map((_, i) => (
-                  <Card key={i} className="h-48 animate-pulse bg-muted/40" />
-                ))
-              : stats.map((s) => <RepoCard key={s.fullName} s={s} />)}
+          <div className="mb-3 flex items-baseline justify-between gap-2">
+            <h3 className="text-lg font-semibold">Projetos ({stats.length})</h3>
+            <span className="text-xs text-muted-foreground">
+              Ordenado por cadastro
+            </span>
           </div>
+
+          {stats.length === 0 && !loading ? (
+            <Card className="p-6 text-center text-sm text-muted-foreground">
+              Nenhum repositório cadastrado. Adicione um acima para começar.
+            </Card>
+          ) : (
+            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+              {loading && stats.length === 0
+                ? Array.from({ length: 3 }).map((_, i) => (
+                    <Card key={i} className="h-48 animate-pulse bg-muted/40" />
+                  ))
+                : stats.map((s) => <RepoCard key={s.fullName} s={s} />)}
+            </div>
+          )}
         </section>
 
         <p className="text-xs text-muted-foreground">
-          O dashboard prioriza sinais de acompanhamento docente. Commits indicam ritmo, mas não substituem avaliação de qualidade, testes ou entrega funcional.
+          Commits indicam ritmo de trabalho, mas não substituem avaliação de
+          qualidade, testes ou entrega funcional. Use o assistente de IA (canto
+          inferior direito) para análises mais profundas.
         </p>
       </main>
 
@@ -326,10 +370,11 @@ function Dashboard() {
       {!chatOpen && (
         <button
           onClick={() => setChatOpen(true)}
-          className="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-xl transition-transform hover:scale-105"
-          aria-label="Abrir assistente"
+          className="fixed bottom-6 right-6 z-40 flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-3 text-sm font-medium text-white shadow-xl transition-transform hover:scale-105"
+          aria-label="Abrir assistente de IA"
         >
-          <Sparkles className="h-6 w-6" />
+          <Sparkles className="h-5 w-5" />
+          <span className="hidden sm:inline">Assistente IA</span>
         </button>
       )}
     </div>
@@ -398,9 +443,10 @@ function RepoCard({ s }: { s: RepoStat }) {
               : `Sem progresso há ${s.daysSinceLastCommit} dia(s)`}
           </div>
           <div className="mt-3 grid grid-cols-3 gap-2 border-t border-border pt-3 text-center">
-            <Stat n={s.commitsLast7Days} l="Semana" />
-            <Stat n={s.commitsLast30Days} l="Mês" />
-            <Stat n={s.uniqueAuthorsWeek} l="Ativos" />
+            <Stat n={s.commitsLast7Days} l="Commits/semana" />
+            <Stat n={s.commitsLast30Days} l="Commits/mês" />
+            <Stat n={s.uniqueAuthorsWeek} l="Autores/semana" />
+
           </div>
         </>
       )}
