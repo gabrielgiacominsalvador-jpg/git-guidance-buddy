@@ -49,7 +49,7 @@ export function ChatPanel({
             <Sparkles className="h-4 w-4" />
           </div>
           <div>
-            <div className="text-sm font-semibold">GitDash Assistant</div>
+            <div className="text-sm font-semibold">Análise técnica de código</div>
             <div className="text-xs text-muted-foreground">
               Conectado a {repos.length} repo(s)
             </div>
