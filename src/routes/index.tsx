@@ -443,9 +443,10 @@ function RepoCard({ s }: { s: RepoStat }) {
               : `Sem progresso há ${s.daysSinceLastCommit} dia(s)`}
           </div>
           <div className="mt-3 grid grid-cols-3 gap-2 border-t border-border pt-3 text-center">
-            <Stat n={s.commitsLast7Days} l="Semana" />
-            <Stat n={s.commitsLast30Days} l="Mês" />
-            <Stat n={s.uniqueAuthorsWeek} l="Ativos" />
+            <Stat n={s.commitsLast7Days} l="Commits/semana" />
+            <Stat n={s.commitsLast30Days} l="Commits/mês" />
+            <Stat n={s.uniqueAuthorsWeek} l="Autores/semana" />
+
           </div>
         </>
       )}
