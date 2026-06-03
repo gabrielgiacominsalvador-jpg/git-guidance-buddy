@@ -34,11 +34,12 @@ export function ChatPanel({
   const loading = status === "submitted" || status === "streaming";
 
   const suggestions = [
-    "Quem está mais atrasado na turma?",
-    "Resuma a atividade de ThomasOnTraining/Gitdash",
-    "Liste os últimos commits dos repositórios monitorados",
-    "Sugira uma mensagem de check-in para gb-eli",
+    "Analise a qualidade das mensagens de commit em ThomasOnTraining/Gitdash",
+    "Leia o README de gb-eli/Iniciando-com-Python-no-DS1-SUB e me diga o que melhorar",
+    "Avalie a qualidade do código em src/App.tsx de ThomasOnTraining/Gitdash",
+    "Os últimos commits de Colegio-Alberto-Gomes-Veiga/meu-primeiro-reposit-rio- mostram progresso real?",
   ];
+
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex h-[600px] w-[420px] max-w-[calc(100vw-2rem)] flex-col rounded-2xl border border-border bg-card shadow-2xl">
@@ -48,7 +49,7 @@ export function ChatPanel({
             <Sparkles className="h-4 w-4" />
           </div>
           <div>
-            <div className="text-sm font-semibold">GitDash Assistant</div>
+            <div className="text-sm font-semibold">Análise técnica de código</div>
             <div className="text-xs text-muted-foreground">
               Conectado a {repos.length} repo(s)
             </div>
@@ -63,9 +64,10 @@ export function ChatPanel({
         {messages.length === 0 && (
           <div className="space-y-3">
             <p className="text-sm text-muted-foreground">
-              Olá! Posso analisar commits, ler arquivos e ajudar com check-ins.
-              O que você quer saber?
+              Diga o que você quer analisar — qualidade de código de um arquivo,
+              padrões de commit de um aluno, ou evolução de um projeto. Aguardo seu comando.
             </p>
+
             <div className="flex flex-col gap-2">
               {suggestions.map((s) => (
                 <button
