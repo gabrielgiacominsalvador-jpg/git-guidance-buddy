@@ -34,11 +34,12 @@ export function ChatPanel({
   const loading = status === "submitted" || status === "streaming";
 
   const suggestions = [
-    "Quem está mais atrasado na turma?",
-    "Resuma a atividade de ThomasOnTraining/Gitdash",
-    "Liste os últimos commits dos repositórios monitorados",
-    "Sugira uma mensagem de check-in para gb-eli",
+    "Analise a qualidade das mensagens de commit em ThomasOnTraining/Gitdash",
+    "Leia o README de gb-eli/Iniciando-com-Python-no-DS1-SUB e me diga o que melhorar",
+    "Avalie a qualidade do código em src/App.tsx de ThomasOnTraining/Gitdash",
+    "Os últimos commits de Colegio-Alberto-Gomes-Veiga/meu-primeiro-reposit-rio- mostram progresso real?",
   ];
+
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex h-[600px] w-[420px] max-w-[calc(100vw-2rem)] flex-col rounded-2xl border border-border bg-card shadow-2xl">
