@@ -64,9 +64,10 @@ export function ChatPanel({
         {messages.length === 0 && (
           <div className="space-y-3">
             <p className="text-sm text-muted-foreground">
-              Olá! Posso analisar commits, ler arquivos e ajudar com check-ins.
-              O que você quer saber?
+              Diga o que você quer analisar — qualidade de código de um arquivo,
+              padrões de commit de um aluno, ou evolução de um projeto. Aguardo seu comando.
             </p>
+
             <div className="flex flex-col gap-2">
               {suggestions.map((s) => (
                 <button
