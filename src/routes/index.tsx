@@ -103,7 +103,7 @@ function Dashboard() {
   const [stats, setStats] = useState<RepoStat[]>([]);
   const [loading, setLoading] = useState(true);
   const [newRepo, setNewRepo] = useState("");
-  const [chatOpen, setChatOpen] = useState(false);
+  
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
