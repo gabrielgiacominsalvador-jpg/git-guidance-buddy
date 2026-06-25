@@ -5,9 +5,9 @@ import {
   LogOut,
   Plus,
   RefreshCw,
-  Sparkles,
   X,
 } from "lucide-react";
+
 import type { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
