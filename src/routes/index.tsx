@@ -5,15 +5,15 @@ import {
   LogOut,
   Plus,
   RefreshCw,
-  Sparkles,
   X,
 } from "lucide-react";
+
 import type { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ChatPanel } from "@/components/ChatPanel";
+
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -103,7 +103,7 @@ function Dashboard() {
   const [stats, setStats] = useState<RepoStat[]>([]);
   const [loading, setLoading] = useState(true);
   const [newRepo, setNewRepo] = useState("");
-  const [chatOpen, setChatOpen] = useState(false);
+  
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
@@ -248,22 +248,10 @@ function Dashboard() {
           <span className="text-emerald-600 dark:text-emerald-400">em dia</span> = ≤5 dias.
         </p>
       </main>
-
-      <ChatPanel open={chatOpen} onClose={() => setChatOpen(false)} repos={repos} />
-
-      {!chatOpen && (
-        <button
-          onClick={() => setChatOpen(true)}
-          className="fixed bottom-6 right-6 z-40 flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow-lg hover:opacity-90"
-          aria-label="Abrir assistente IA"
-        >
-          <Sparkles className="h-4 w-4" />
-          <span className="hidden sm:inline">Assistente IA</span>
-        </button>
-      )}
     </div>
   );
 }
+
 
 function RepoRow({ s, onRemove }: { s: RepoStat; onRemove: () => void }) {
   const risk = riskLevel(s);
